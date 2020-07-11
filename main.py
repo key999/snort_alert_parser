@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from sys import argv
+from sys import argv, exit as sysexit
 
 ALERT_FILE = "alert.bin"
 
@@ -34,8 +34,25 @@ if __name__ == "__main__":
     verbose_mode = True if "-v" in argv else False
     port_mode = True if "-p" in argv else False
     ip_mode = True if "-i" in argv else False
+    help = True if "-h" in argv else False
 
-    attacks = parse()
+    if help:
+        print("Script usage:\n"
+              "\t./main.py [-in] filename [-i] [-p] [-v]\n\n"
+              "\t-in : snort alert file\n"
+              "\t-i : IP mode\n"
+              "\t-p : port mode\n"
+              "\t-v : verbose mode")
+        exit(0)
+
+    if "-in" in argv:
+        ALERT_FILE = argv[argv.index("-in") + 1]
+
+    try:
+        attacks = parse()
+    except FileNotFoundError as e:
+        print(e)
+        exit(-1)
 
     attacks_total = 0
     for i in attacks:
